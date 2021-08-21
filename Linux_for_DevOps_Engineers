@@ -1,0 +1,184 @@
+Linux-DevOps:
+
+Linux FileSystem Hierchy
+
+
+yum install tree
+
+1 directory, 11 files
+[root@cdfe94ac5c9f dir1]# pwd
+/mnt/dir1
+[root@cdfe94ac5c9f dir1]# find / -name w
+/mnt/dir1/d2/w
+/mnt/dir1/w
+/usr/share/terminfo/w
+/usr/bin/w
+[root@cdfe94ac5c9f dir1]# find  -name w
+./d2/w
+./w
+[root@cdfe94ac5c9f dir1]# tree
+.
+|-- a
+|-- b
+|-- c
+|-- d2
+|   |-- a
+|   |-- b
+|   |-- e
+|   |-- s
+|   `-- w
+|-- e
+|-- s
+`-- w
+
+1 directory, 11 files
+[root@cdfe94ac5c9f dir1]#
+  absolute path starts with /
+cd /mnt/dir1
+
+relative path starts with other than /
+ cd ../mnt/dir1
+
+diff file1 file2      show difference between files
+
+GREP
+Global Regular Expression Print
+
+grep Permit /etc/ssh/sshd_config
+
+grep -i PERMIT   /etc/ssh/sshd_config        //Ignore the case sensitive
+
+ls -l | grep environment
+
+grep ^t file1
+
+ls -l | grep ^d    //used to display directory
+
+
+[ec2-user@ip-172-31-35-72 ~]$ ls
+[ec2-user@ip-172-31-35-72 ~]$ who
+ec2-user pts/0        2021-02-11 16:46 (117.236.132.202)
+[ec2-user@ip-172-31-35-72 ~]$ whoiam
+-bash: whoiam: command not found
+[ec2-user@ip-172-31-35-72 ~]$ whoami
+ec2-user
+[ec2-user@ip-172-31-35-72 ~]$ id
+uid=1000(ec2-user) gid=1000(ec2-user) groups=1000(ec2-user),4(adm),190(systemd-journal) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+[ec2-user@ip-172-31-35-72 ~]$ w
+ 16:47:22 up 3 min,  1 user,  load average: 0.15, 0.21, 0.09
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+ec2-user pts/0    117.236.132.202  16:46    0.00s  0.01s  0.00s w
+[ec2-user@ip-172-31-35-72 ~]$
+
+when user is created in linux:
+it will get:
+1. a home directory
+2. unique UID and GID
+3. an entry in /etc/passwd
+
+[root@ip-172-31-35-72 ~]# useradd john
+[root@ip-172-31-35-72 ~]# id john
+uid=1001(john) gid=1001(john) groups=1001(john)
+[root@ip-172-31-35-72 ~]# cd /home/
+[root@ip-172-31-35-72 home]# ls
+ec2-user  john
+[root@ip-172-31-35-72 home]#
+
+
+[root@ip-172-31-35-72 home]# cat /etc/group | tail -3
+rngd:x:991:
+ec2-user:x:1000:
+john:x:1001:
+[root@ip-172-31-35-72 home]#
+[root@ip-172-31-35-72 home]# useradd mark
+[root@ip-172-31-35-72 home]# cat /etc/passwd | tail -3
+ec2-user:x:1000:1000:Cloud User:/home/ec2-user:/bin/bash
+john:x:1001:1001::/home/john:/bin/bash
+mark:x:1002:1002::/home/mark:/bin/bash
+[root@ip-172-31-35-72 home]# cat /etc/group | tail -3
+ec2-user:x:1000:
+john:x:1001:
+mark:x:1002:
+[root@ip-172-31-35-72 home]# cat /etc/group | tail -4
+rngd:x:991:
+ec2-user:x:1000:
+john:x:1001:
+mark:x:1002:
+[root@ip-172-31-35-72 home]#
+[root@ip-172-31-35-72 home]# usermod -G john mark
+[root@ip-172-31-35-72 home]# id mark
+uid=1002(mark) gid=1002(mark) groups=1002(mark),1001(john)
+[root@ip-172-31-35-72 home]# id john
+uid=1001(john) gid=1001(john) groups=1001(john)
+[root@ip-172-31-35-72 home]#
+-u user id
+-G sec group id
+-g primary group id
+-d home directory
+-c comment
+-s shell
+
+
+[root@ip-172-31-35-72 home]# cat /etc/passwd | tail -3
+ec2-user:x:1000:1000:Cloud User:/home/ec2-user:/bin/bash
+john:x:1001:1001::/home/john:/bin/bash
+mark:x:1002:1002::/home/mark:/bin/bash
+[root@ip-172-31-35-72 home]# passwd john
+Changing password for user john.
+New password:
+BAD PASSWORD: The password is shorter than 8 characters
+Retype new password:
+passwd: all authentication tokens updated successfully.
+[root@ip-172-31-35-72 home]# cat /etc/passwd | tail -3
+ec2-user:x:1000:1000:Cloud User:/home/ec2-user:/bin/bash
+john:x:1001:1001::/home/john:/bin/bash
+mark:x:1002:1002::/home/mark:/bin/bash
+[root@ip-172-31-35-72 home]# nano /etc/ss
+ssh/  ssl/  sssd/
+[root@ip-172-31-35-72 home]# nano /etc/ssh/sshd_config
+-bash: nano: command not found
+[root@ip-172-31-35-72 home]# vi /etc/ssh/sshd_config
+[root@ip-172-31-35-72 home]# service sshd reload
+Redirecting to /bin/systemctl reload sshd.service
+[root@ip-172-31-35-72 home]#
+
+chmod u+x,g-w,o=r file1
+
+du
+
+whereis ls
+which ls
+df
+
+yum info tree
+
+yum list installed | grep wget
+
+yum list available | grep wget
+
+
+hostname
+cat /etc/hostname
+
+init 6 restart
+runlevel techarkit
+
+telnet ip-addr/hostname port no
+
+telnet localhost 22
+
+used to check port is open or note on local or remote server
+
+netstat -tulpn  ///alternative to telnet
+
+service name-of-service status
+                                       start
+                                       stop
+
+
+
+
+
+
+
+ 

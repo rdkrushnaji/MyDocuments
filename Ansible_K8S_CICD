@@ -1,0 +1,319 @@
+Ansible Kubernetes CICD
+
+Jenkins Server:
+
+[ec2-user@ip-172-31-33-128 ~]$ sudo su -
+[root@ip-172-31-33-128 ~]# hostname jenkins-server
+[root@ip-172-31-33-128 ~]# sudo su -
+Last login: Sun Feb 14 04:47:15 UTC 2021 on pts/0
+[root@jenkins-server ~]# java -version
+-bash: java: command not found
+[root@jenkins-server ~]# yum install java-1.8*
+[root@jenkins-server ~]# find /usr/lib/jvm/java-1.8* | head -n 3
+/usr/lib/jvm/java-1.8.0
+/usr/lib/jvm/java-1.8.0-openjdk
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.amzn2.0.1.x86_64
+
+[root@jenkins-server ~]# find /usr/lib/jvm/java-1.8* | head -n 3
+/usr/lib/jvm/java-1.8.0
+/usr/lib/jvm/java-1.8.0-openjdk
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.amzn2.0.1.x86_64
+[root@jenkins-server ~]# cd ~
+[root@jenkins-server ~]# vi .bash_profile
+
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.amzn2.0.1.x86_64
+PATH=$PATH:$HOME/bin:$JAVA_HOME
+
+
+[root@jenkins-server ~]# echo $JAVA_HOME
+
+[root@jenkins-server ~]# exit
+logout
+[root@ip-172-31-33-128 ~]# sudo su -
+Last login: Sun Feb 14 04:47:44 UTC 2021 on pts/0
+[root@jenkins-server ~]# echo $JAVA_HOME
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.amzn2.0.1.x86_64
+
+[root@jenkins-server ~]# sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+[root@jenkins-server ~]# sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+[root@jenkins-server ~]#
+[root@jenkins-server ~]# yum install jenkins -y
+
+[root@jenkins-server ~]#  service jenkins status
+
+[root@jenkins-server ~]#  service jenkins start
+
+[root@jenkins-server ~]#  service jenkins status
+
+[root@jenkins-server ~]# cat /var/lib/jenkins/secrets/initialAdminPassword
+
+set admin user password
+global tool configuration
+add java path as follows:
+jdk name JAVA_HOME
+PATH  
+[root@jenkins-server ~]# echo $JAVA_HOME
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.amzn2.0.1.x86_64
+/////////////////////////////////////////////////
+
+[root@jenkins-server ~]# yum install git -y
+
+install github plugin
+
+Global Tool Configuration
+name github
+since git is a installation s/w no need to provide full path
+/////////////////////////////////////
+
+MAVEN:
+[root@jenkins-server ~]# pwd
+/root
+[root@jenkins-server ~]# cd /opt/
+[root@jenkins-server opt]# wget https://mirrors.estointernet.in/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+
+
+[root@jenkins-server opt]# ls
+apache-maven-3.6.3-bin.tar.gz  aws  rh
+[root@jenkins-server opt]# tar -xvzf apache-maven-3.6.3-bin.tar.gz
+[root@jenkins-server opt]# ls
+apache-maven-3.6.3  apache-maven-3.6.3-bin.tar.gz  aws  rh
+[root@jenkins-server opt]# mv apache-maven-3.6.3 maven
+[root@jenkins-server opt]# ls
+apache-maven-3.6.3-bin.tar.gz  aws  maven  rh
+[root@jenkins-server opt]#
+[root@jenkins-server opt]# cd maven/
+[root@jenkins-server maven]# pwd
+/opt/maven
+[root@jenkins-server maven]# ls
+bin  boot  conf  lib  LICENSE  NOTICE  README.txt
+[root@jenkins-server maven]#
+
+[root@jenkins-server maven]# cd ~
+[root@jenkins-server ~]#  vi ~/.bash_profile
+
+
+M2_HOME=/opt/maven
+M2=/opt/maven/bin
+PATH=$PATH:$HOME/bin:$JAVA_HOME:$M2_HOME:$M2
+
+[root@jenkins-server ~]# sudo su -
+Last login: Sun Feb 14 04:59:28 UTC 2021 on pts/0
+[root@jenkins-server ~]# echo $M2
+/opt/maven/bin
+[root@jenkins-server ~]# echo $M2_HOME
+/opt/maven
+
+[root@jenkins-server ~]# mvn --version
+Plugin :
+Maven integration
+ maven invoker
+
+PATH:
+Global Tool Configuration
+M2_HOME
+/opt/maven
+
+*******************************************************************************************
+Docker-Host
+
+[root@docker-host ~]# yum install docker -y
+[root@docker-host ~]# service docker status
+[root@docker-host ~]# service docker start
+[root@docker-host ~]# service docker status
+[root@docker-host ~]# docker ps
+
+Plugin
+publish over ssh
+
+[root@docker-host ~]# useradd dockeradmin
+[root@docker-host ~]# passwd dockeradmin
+Changing password for user dockeradmin.
+New password:
+BAD PASSWORD: The password contains the user name in some form
+Retype new password:
+passwd: all authentication tokens updated successfully.
+[root@docker-host ~]# cat /etc/group | tail -3
+cgred:x:993:
+docker:x:992:
+dockeradmin:x:1001:
+[root@docker-host ~]# cat /etc/group | tail -n 3
+cgred:x:993:
+docker:x:992:
+dockeradmin:x:1001:
+[root@docker-host ~]#
+
+[root@docker-host ~]# usermod -aG docker dockeradmin
+[root@docker-host ~]# id dockeradmin
+uid=1001(dockeradmin) gid=1001(dockeradmin) groups=1001(dockeradmin),992(docker)
+[root@docker-host ~]#
+
+Manage jenkins => configure system ->
+
+Publish over ssh => add SSH Servers
+
+Name	
+docker-host
+ 	Hostname	
+172.31.15.92
+ 	Username	
+dockeradmin
+ 	Remote Directory	
+Use password authentication, or use a different key
+ 	Passphrase / Password	
+
+enable-password based authentication
+
+[root@docker-host ~]# service sshd reload
+[root@docker-host ~]# ls
+[root@docker-host ~]# su - dockeradmin
+[dockeradmin@docker-host ~]$ pwd
+/home/dockeradmin
+[dockeradmin@docker-host ~]$ whoami
+dockeradmin
+[dockeradmin@docker-host ~]$ ls
+webapp
+[dockeradmin@docker-host ~]$ cd webapp/target/
+[dockeradmin@docker-host target]$ ls
+webapp.war
+[dockeradmin@docker-host target]$
+******************************************************************************************
+
+Ansible control node
+
++++++++++++++++++++++++
+
+[ec2-user@ip-172-31-0-108 ~]$ hostname ansible-control-node
+hostname: you must be root to change the host name
+[ec2-user@ip-172-31-0-108 ~]$ sudo su -
+[root@ip-172-31-0-108 ~]# hostname ansible-control-node
+[root@ip-172-31-0-108 ~]# sudo su -
+Last login: Sun Feb 14 06:46:33 UTC 2021 on pts/0
+[root@ansible-control-node ~]# yum install python
+
+[root@ansible-control-node ~]# python --version
+Python 2.7.18
+[root@ansible-control-node ~]# yum install python-pip -y
+
+[root@ansible-control-node ~]# pip install ansible
+[root@ansible-control-node ~]# ansible --version
+ansible 2.10.5
+[root@ansible-control-node ~]# mkdir /etc/ansible
+[root@ansible-control-node ~]# useradd ansadmin
+[root@ansible-control-node ~]# passwd ansadmin
+[root@ansible-control-node ~]# visudo
+shift+g to go end of the file
+ansadmin ALL=(ALL)       NOPASSWD: ALL
+
+[root@ansible-control-node ~]# yum install docker -y
+[root@ansible-control-node ~]# service docker status
+[root@ansible-control-node ~]# service docker start
+
+[root@ansible-control-node ~]# docker ps
+[root@ansible-control-node ~]# usermod -aG docker ansadmin
+[root@ansible-control-node ~]# id ansadmin
+uid=1001(ansadmin) gid=1001(ansadmin) groups=1001(ansadmin),992(docker)
+[root@ansible-control-node ~]# vi /etc/ssh/sshd_config
+[root@ansible-control-node ~]# service sshd reload
+[root@ansible-control-node ~]# su - ansadmin
+[ansadmin@ansible-control-node ~]$ ssh-keygen
+[ansadmin@ansible-control-node ~]$ ls -la
+[ansadmin@ansible-control-node ~]$ cd .ssh/
+[ansadmin@ansible-control-node .ssh]$ ls
+
+now go to docker-host
+[root@docker-host ~]# useradd ansadmin
+[root@docker-host ~]# passwd ansadmin
+
+
+[ansadmin@ansible-control-node .ssh]$ ssh-copy-id ansadmin@172.31.15.92
+
+[ansadmin@ansible-control-node .ssh]$ ssh ansadmin@172.31.15.92
+
+
+
+[ansadmin@ansible-control-node .ssh]$ cd /etc/ansible/
+[ansadmin@ansible-control-node ansible]$ vi hosts
+[ansadmin@ansible-control-node ansible]$ sudo vi hosts
+
+[ansadmin@ansible-control-node ansible]$ ansible all -m ping
+
+[ansadmin@ansible-control-node ansible]$ ssh-copy-id localhost
+
+[ansadmin@ansible-control-node ansible]$ ansible all -m ping
+
+[ansadmin@ansible-control-node ansible]$ cd /opt/
+[ansadmin@ansible-control-node opt]$ ls
+aws  containerd  rh
+[ansadmin@ansible-control-node opt]$ sudo mkdir docker
+[ansadmin@ansible-control-node opt]$ sudo chown -R ansadmin:ansadmin /opt/docker/
+[ansadmin@ansible-control-node opt]$ ls -l /opt/
+total 0
+drwxr-xr-x 4 root     root     33 Jan 26 04:15 aws
+drwx--x--x 4 root     root     28 Feb 14 07:02 containerd
+drwxr-xr-x 2 ansadmin ansadmin  6 Feb 14 07:33 docker
+drwxr-xr-x 2 root     root      6 Aug 16  2018 rh
+[ansadmin@ansible-control-node opt]$
+
+888888888888888888888888888888888
+[ansadmin@ansible-control-node docker]$ cat create-simple-devops-image.yml
+---
+- hosts: all
+  become: true
+
+  tasks:
+  - name: create docker image using war file
+    command: docker build -t  simple-devops-image:latest  .
+    args:
+      chdir: /opt/docker
+
+  - name: create tag to image
+    command: docker tag simple-devops-image krushnaji/simple-devops-image:latest
+
+  - name: push image to  docker hub
+    command: docker push krushnaji/simple-devops-image
+
+
+  - name: remove docker images from ansible-server
+    command: docker rmi simple-devops-image:latest krushnaji/simple-devops-image
+    ignore_errors: yes
+
+[ansadmin@ansible-control-node docker]$ cat create-simple-devops-project.yml
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: stop if we have old docker container
+    command: docker stop simple-devops-container
+    ignore_errors: yes
+
+  - name: remove stopped docker container
+    command: docker rm simple-devops-container
+    ignore_errors: yes
+
+  - name: remove current docker image
+    command: docker rmi krushnaji/simple-devops-image:latest
+    ignore_errors: yes
+
+  - name: pull docker image from dockerhub
+    command: docker pull krushnaji/simple-devops-image:latest
+
+  - name: creating docker container
+    command: docker run -d --name simple-devops-container -p 8080:8080 krushnaji/simple-devops-image:latest
+
+
+# - name: building docker image
+#   command: docker build -t simple-devops-image .
+#   args:
+#     chdir: /opt/docker
+
+[ansadmin@ansible-control-node docker]$
+88888888888888888888888888
+
+
+
+
+
+
+
+
+

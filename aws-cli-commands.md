@@ -19,3 +19,4 @@ delete: s3://krushnaji-s3/terraformstate/vpc-statefile
 remove_bucket: krushnaji-s3
 PS C:\Users\vicky>
  
+aws s3 mv s3://bucket-name/example s3://my-bucket/

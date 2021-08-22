@@ -59,3 +59,47 @@ Destroy complete! Resources: 1 destroyed.
     terraform plan -no-color
     
  //to avoid jin characters
+ 
+ 
+ 
+ # Terraform StateFile
+ 
+ 
+ Terraform must store state about your managed infrastructure and configuration. This state is used by Terraform to map real world resources to your configuration, keep track of metadata, and to improve performance for large infrastructures.
+
+This state is stored by default in a local file named "terraform.tfstate", but it can also be stored remotely, which works better in a team environment.
+ 
+ 
+ State file is very imp and terraform apply command creates state file
+ if you apply terraform apply again then it refresh the state file
+ checks already created resources
+ for safety store state file in s3 bucket
+ 
+ 
+     terraform {
+      backend "s3" {
+        bucket = "krushnaji-s3"
+        key    = "terraformstate/vpc-statefile"
+        region = "us-east-1"
+      }
+    }
+ 
+ now delete state file in local....delete all files except .tf file
+ 
+        terraform init
+        
+   initialise project again
+   
+   
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

@@ -91,8 +91,65 @@ This state is stored by default in a local file named "terraform.tfstate", but i
    initialise project again
    
    
+ ## variables and values
  
+ variables.tf
  
+ variable "vpc_cidr" {
+
+    type = string
+  
+}
+
+variable "region" {
+
+    type = string
+  
+}
+
+#############################
+
+terraform.tfvars
+
+vpc_cidr = "172.32.0.0/16"
+region = "us-east-1"
+
+#############################
+
+myvpc.tf
+
+
+provider "aws" {
+
+**region = var.region**
+
+access_key = "xxxxxxxxxxxxxxxxxxxx"
+
+secret_key = "xxxxxxxxxxxxxxxxxxxxxxxxxx"  
+
+}
+ 
+ terraform {
+ 
+  backend "s3" {
+  
+    bucket = "krushnaji-s3"
+    
+    
+    key    = "terraformstate/vpc-statefile"
+    
+    **region = var.region**
+  }
+}
+
+
+resource "aws_vpc" "krushnaji-vpc" {
+
+**cidr_block = var.vpc_cidr**
+
+}
+
+###################################### 
  
  
  

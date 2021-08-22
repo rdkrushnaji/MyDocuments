@@ -1,0 +1,12 @@
+PS C:\Users\vicky> aws configure
+AWS Access Key ID [****************XLDO]: HDNXUSJNXMXXKSJSJJSJNXM
+AWS Secret Access Key [****************aDn/]: XJJJLmjolssjlJLSLSLKLJCjljsljljslmxlxj
+
+aws s3 mb s3://krushnaji-s3
+
+PS C:\Users\vicky> aws s3 mb s3://krushnaji-s3
+make_bucket: krushnaji-s3
+PS C:\Users\vicky> aws s3 ls
+2021-08-22 14:03:17 krushnaji-s3
+PS C:\Users\vicky>
+

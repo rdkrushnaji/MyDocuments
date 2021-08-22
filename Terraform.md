@@ -50,3 +50,12 @@ aws_vpc.krushnaji-vpc: Destroying... [id=vpc-076068fba606a31f0]
 aws_vpc.krushnaji-vpc: Destruction complete after 1s
 
 Destroy complete! Resources: 1 destroyed.
+
+
+    terraform plan
+
+**or**
+
+    terraform plan -no-color
+    
+ //to avoid jin characters

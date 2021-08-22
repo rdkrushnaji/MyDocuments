@@ -1,8 +1,10 @@
-PS C:\Users\vicky> aws configure
-AWS Access Key ID [****************XLDO]: HDNXUSJNXMXXKSJSJJSJNXM
-AWS Secret Access Key [****************aDn/]: XJJJLmjolssjlJLSLSLKLJCjljsljljslmxlxj
+# aws s3 cli commands
 
-aws s3 mb s3://krushnaji-s3
+PS C:\Users\vicky> aws configure
+AWS Access Key ID [****************XLDO]: xxxxxxxxxxxxxxxxxxxxxx
+AWS Secret Access Key [****************aDn/]: xxxxxxxxxxxxxxxxxxxxxxxxxj
+
+### aws s3 mb s3://krushnaji-s3
 
 PS C:\Users\vicky> aws s3 mb s3://krushnaji-s3
 make_bucket: krushnaji-s3
@@ -16,3 +18,4 @@ PS C:\Users\vicky> aws s3 rb s3://krushnaji-s3 --force
 delete: s3://krushnaji-s3/terraformstate/vpc-statefile
 remove_bucket: krushnaji-s3
 PS C:\Users\vicky>
+ 
